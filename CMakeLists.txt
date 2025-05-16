@@ -26,19 +26,20 @@ target_link_libraries(muphy2 PRIVATE MPI::MPI_CXX MPI::MPI_Fortran)
 # Check for MPI support
 find_package(MPI REQUIRED)
 
-option(ENABLE_OPENACC "Enable OpenACC support" ON)
-option(ENABLE_CUDA "Enable CUDA support" ON)
+option(ENABLE_OPENACC "Enable OpenACC support" OFF)
+option(ENABLE_CUDA "Enable CUDA support" OFF)
 if (ENABLE_OPENACC)
     # Check for OpenACC support
     find_package(OpenACC)
     if (OpenACC_FOUND)
         message(STATUS "Enabling OpenACC support")
-        target_link_libraries(muphy2 PRIVATE OpenACC::OpenACC_CXX)
+        target_link_libraries(muphy2 PRIVATE OpenACC::OpenACC_CXX OpenACC::OpenACC_Fortran)
         target_compile_options(muphy2 PRIVATE
             $<$<COMPILE_LANGUAGE:CXX>:${OpenACC_CXX_OPTIONS}>
             $<$<COMPILE_LANGUAGE:Fortran>:${OpenACC_Fortran_OPTIONS}>
         )
         if (ENABLE_CUDA)
+            # Check for CUDA, will fail configure if not found
             enable_language(CUDA)
             if (CUDA_FOUND)
                 message(STATUS "Enabling CUDA support")
