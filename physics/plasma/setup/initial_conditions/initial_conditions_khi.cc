@@ -10,7 +10,7 @@
 #include <math.h>
 #include <fstream>
 
-#include "bin/initial_conditions_files_content.h"
+#include "initial_conditions_files_content.h"
 
 
 void Parameter::init() {

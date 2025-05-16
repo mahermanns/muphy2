@@ -10,7 +10,7 @@
 #include <math.h>
 #include <fstream>
 
-#include "bin/initial_conditions_files_content.h"
+#include "initial_conditions_files_content.h"
 
 #include "physics/plasma/criteria/criterion_position.h"
 
