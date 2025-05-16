@@ -60,12 +60,12 @@ target_sources(muphy2 PRIVATE ${MUPHY2_INITIAL_CONDITIONS_DIR}/${MUPHY2_INITIAL_
 set(MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT initial_conditions_files_content.h)
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
-    COMMAND cp ../physics/plasma/setup/initial_conditions/${MUPHY2_INITIAL_CONDITIONS_FILE} ../framework/initial_conditions.cc
-    COMMAND xxd -i ../framework/initial_conditions.cc > ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
-    COMMAND xxd -i ../framework/parameter.h >> ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
-    COMMAND xxd -i ../physics/plasma/setup/setup.F90 >> ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
-    DEPENDS ../framework/initial_conditions.cc ../framework/parameter.h ../physics/plasma/setup/setup.F90
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/framework
+    COMMAND cp ${MUPHY2_INITIAL_CONDITIONS_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILE} ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
+    COMMAND xxd -i ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc | sed -e "s/_.*_initial_conditions_cc/___framework_initial_conditions_cc/" > ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
+    COMMAND xxd -i framework/parameter.h | sed -e "s/[ ]*framework_parameter_h/ ___framework_parameter_h/" >> ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
+    COMMAND xxd -i physics/plasma/setup/setup.F90 | sed -e "s/physics.*setup_F90/___physics_plasma_setup_setup_F90/" >> ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
+    DEPENDS ${MUPHY2_INITIAL_CONDITIONS_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILE} framework/parameter.h physics/plasma/setup/setup.F90
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Generating '${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}'"
     )
 target_sources(muphy2 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT})
