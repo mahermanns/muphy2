@@ -113,11 +113,15 @@ add_subdirectory(physics/plasma/output)
 add_subdirectory(physics/plasma/schemes)
 add_subdirectory(physics/plasma/setup)
 
+# Assemble compile time options for target
 target_compile_options(muphy2 PRIVATE
     $<$<CXX_COMPILER_ID:NVHPC>:-fast>
-    $<$<CXX_COMPILER_ID:GNU,Intel,IntelLLVM>:-Ofast -march=native -mtune=native>
-    $<$<CXX_COMPILER_ID:GNU>:-lgfortran -MMD>
-    $<$<COMPILE_LANGUAGE:Fortran>:$<$<Fortran_COMPILER_ID:GNU>:-ffree-line-length-none>>
+    $<$<CXX_COMPILER_ID:Clang,GNU,Intel,IntelLLVM>:-Ofast -march=native -mtune=native>
+    $<$<CXX_COMPILER_ID:GNU>:-MMD>
+    $<$<COMPILE_LANGUAGE:Fortran>:$<$<Fortran_COMPILER_ID:GNU>:-fPIE -ffree-line-length-none>>
+)
+target_link_libraries(muphy2 PRIVATE
+    $<$<CXX_COMPILER_ID:GNU>:-lgfortran>
 )
 
 install(TARGETS muphy2 DESTINATION bin)
