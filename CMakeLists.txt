@@ -30,6 +30,14 @@ target_link_libraries(muphy2 PRIVATE MPI::MPI_CXX MPI::MPI_Fortran)
 # Check for MPI support
 find_package(MPI REQUIRED)
 
+# Set precision of floating point operations
+set(PRECISION "DOUBLE" CACHE STRING "Select precision: SINGLE or DOUBLE")
+set_property(CACHE PRECISION PROPERTY STRINGS SINGLE DOUBLE)
+message(STATUS "Selected precision: ${PRECISION}")
+if("${PRECISION}" STREQUAL "SINGLE")
+    target_compile_options(muphy2 PRIVATE -DSINGLE_PRECISION)
+endif()
+
 # Enable check for OpenACC if NVHPC is used, otherwise disable automatic check
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "NVHPC")
     set(OPENACC_DEFAULT ON)
@@ -49,6 +57,15 @@ if (ENABLE_OPENACC)
             $<$<COMPILE_LANGUAGE:CXX>:${OpenACC_CXX_OPTIONS}>
             $<$<COMPILE_LANGUAGE:Fortran>:${OpenACC_Fortran_OPTIONS}>
         )
+
+        # Set 2D vs 3D optimizations for OpenACC pragmas
+        set(ACC_OPT "3D" CACHE STRING "Select dimensionality to optimize ACC pragmas for: 2D or 3D")
+        set_property(CACHE ACC_OPT PROPERTY STRINGS 2D 3D)
+        message(STATUS "Optimizing ACC pragmas for: ${ACC_OPT}")
+        if("${ACC_OPT}" STREQUAL "2D")
+            target_compile_options(muphy2 PRIVATE -DACC_2D_OPT)
+        endif()
+
         if (ENABLE_CUDA)
             # Check for CUDA, will fail configure if not found
             enable_language(CUDA)
