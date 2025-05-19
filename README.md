@@ -44,8 +44,8 @@ The following options can be set to influence the build:
 
 |CMake Option | Description |
 |----|-----|
-|PRECISION | Influence floating point precision. Default is 'DOUBLE', can be set to 'SINGLE' manually |
-|ACC_OPT| Optimization of OpenACC pragmas for either '2D' or '3D'. Default is '3D', can be set to '2D' manually |
+|PRECISION | Influence floating point precision. (default: 'DOUBLE', can be set to 'SINGLE' manually) |
+|ACC_OPT| Optimization of OpenACC pragmas for either '2D' or '3D'. Default: '3D', can be set to '2D' manually) |
 |ENABLE_OPENACC | Check for and enable OpenACC support (default: ON for NVHPC, OFF otherwise) |
 |ENABLE_CUDA | Check for and enable CUDA support (default: ON for NVHPC, OFF otherwise) |
 |MUPHY2_NPROC_X | Number of processes in first dimension (default: 1) |
@@ -55,6 +55,12 @@ The following options can be set to influence the build:
 Configure with
 ```sh
 cmake -S /path/to/muphy2/basedir -B /path/to/build/dir
+```
+
+You can set specific options if `-D<OPTION>=<VALUE>` as usual in CMake. For example, select
+single precision with the following command.
+```sh
+cmake -S /path/to/muphy2/basedir -B /path/to/build/dir -DPRECISION=SINGLE
 ```
 
 **COMPILATION**
