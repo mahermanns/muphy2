@@ -36,25 +36,34 @@ User information and documentation is available in the `doc/` folder.
 
 **PRE-COMPILATION**
 
-Make sure to load all required libraries. We use the
-Nvidia HPC compiler for GPU compilation and GCC or Intel compiler
-for CPU compilation.
+Compilation requires CMake version 3.16 and above.
+Furthermore, NVHPC compiler is needed for GPU compilation,
+GCC or Intel compiler for CPU compilation.
 
-Examples are provided in the makefile (`bin/Makefile`).
-There are also options to switch from GPU to CPU compilation.
-Use the SETTINGS variable in the makefile to switch to
-single precision and/or 2D loop optimization.
+The following options can be set to influence the build:
 
-Uncomment whatever you need or add your own library settings.
+|CMake Option | Description |
+|----|-----|
+|PRECISION | Influence floating point precision. Default is 'DOUBLE', can be
+set to 'SINGLE' manually |
+|ACC_OPT| Optimization of OpenACC pragmas for either '2D' or '3D'. Default is
+'3D', can be set to '2D' manually |
+|ENABLE_OPENACC | Check for and enable OpenACC support (default: ON for NVHPC, OFF
+otherwise) |
+|ENABLE_CUDA | Check for and enable CUDA support (default: ON for NVHPC, OFF
+otherwise) |
 
+Configure with
+```sh
+$ cmake -S /path/to/muphy2/basedir -B /path/to/build/dir
+```
 
 **COMPILATION**
 
-Change to bin/ directory and type
-
-`make -j 8`
-
-to compile with 8 processes. If successful, an executable named `muphy2` is generated in the `bin/` folder.
+```sh
+$ cmake --build /path/to/build/dir --parallel 8
+```
+to compile with 8 processes. If successful, an executable named `muphy2` is generated in the build directory folder.
 
 Remove all build files with
 
