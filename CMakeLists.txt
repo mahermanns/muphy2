@@ -30,8 +30,15 @@ target_link_libraries(muphy2 PRIVATE MPI::MPI_CXX MPI::MPI_Fortran)
 # Check for MPI support
 find_package(MPI REQUIRED)
 
-option(ENABLE_OPENACC "Enable OpenACC support" OFF)
-option(ENABLE_CUDA "Enable CUDA support" OFF)
+# Enable check for OpenACC if NVHPC is used, otherwise disable automatic check
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "NVHPC")
+    set(OPENACC_DEFAULT ON)
+elseif()
+    set(OPENACC_DEFAULT OFF)
+endif()
+
+option(ENABLE_OPENACC "Enable OpenACC support" ${OPENACC_DEFAULT})
+option(ENABLE_CUDA "Enable CUDA support" ${OPENACC_DEFAULT})
 if (ENABLE_OPENACC)
     # Check for OpenACC support
     find_package(OpenACC)
