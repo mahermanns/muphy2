@@ -78,11 +78,10 @@ else()
     message(STATUS "Disabling OpenACC support")
 endif()
 
-
 # Add specific initial conditions file to target dependencies
 set(MUPHY2_INITIAL_CONDITIONS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/physics/plasma/setup/initial_conditions CACHE PATH "Source directory for initial conditions file")
 set(MUPHY2_INITIAL_CONDITIONS_FILE initial_conditions_ot.cc CACHE FILEPATH "Source file for initial conditions")
-message(STATUS "Using initial conditions file: ${MUPHY2_INITIAL_CONDITIONS_FILE}")
+message(STATUS "Using initial conditions file: ${MUPHY2_INITIAL_CONDITIONS_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILE}")
 target_sources(muphy2 PRIVATE ${MUPHY2_INITIAL_CONDITIONS_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILE})
 
 # Generate Hex-dumped headers
@@ -97,10 +96,14 @@ add_custom_command(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Generating '${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}'"
     )
+# Add generated file to target source dependencies
 target_sources(muphy2 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT})
 
-target_include_directories(muphy2 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+# Add base directory to include path (to satisfy '#include "framework/..."'
+# statements)
 target_include_directories(muphy2 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+# Add build directory to include path (to enable finding generated sources)
+target_include_directories(muphy2 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(framework)
 add_subdirectory(physics/plasma/converters)
