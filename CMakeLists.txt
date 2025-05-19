@@ -18,6 +18,10 @@ project(muphy2
 # Detect and set correct CXX flags for C++11
 set(CMAKE_CXX_STANDARD 11)
 
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "Choose the type of build." FORCE)
+endif()
+
 # Create target for 'muphy2' executable
 add_executable(muphy2)
 
