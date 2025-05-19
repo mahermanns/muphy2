@@ -44,24 +44,20 @@ The following options can be set to influence the build:
 
 |CMake Option | Description |
 |----|-----|
-|PRECISION | Influence floating point precision. Default is 'DOUBLE', can be
-set to 'SINGLE' manually |
-|ACC_OPT| Optimization of OpenACC pragmas for either '2D' or '3D'. Default is
-'3D', can be set to '2D' manually |
-|ENABLE_OPENACC | Check for and enable OpenACC support (default: ON for NVHPC, OFF
-otherwise) |
-|ENABLE_CUDA | Check for and enable CUDA support (default: ON for NVHPC, OFF
-otherwise) |
+|PRECISION | Influence floating point precision. Default is 'DOUBLE', can be set to 'SINGLE' manually |
+|ACC_OPT| Optimization of OpenACC pragmas for either '2D' or '3D'. Default is '3D', can be set to '2D' manually |
+|ENABLE_OPENACC | Check for and enable OpenACC support (default: ON for NVHPC, OFF otherwise) |
+|ENABLE_CUDA | Check for and enable CUDA support (default: ON for NVHPC, OFF otherwise) |
 
 Configure with
 ```sh
-$ cmake -S /path/to/muphy2/basedir -B /path/to/build/dir
+cmake -S /path/to/muphy2/basedir -B /path/to/build/dir
 ```
 
 **COMPILATION**
 
 ```sh
-$ cmake --build /path/to/build/dir --parallel 8
+cmake --build /path/to/build/dir --parallel 8
 ```
 to compile with 8 processes. If successful, an executable named `muphy2` is generated in the build directory folder.
 
