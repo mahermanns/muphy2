@@ -84,11 +84,20 @@ set(MUPHY2_INITIAL_CONDITIONS_FILE initial_conditions_ot.cc CACHE FILEPATH "Sour
 message(STATUS "Using initial conditions file: ${MUPHY2_INITIAL_CONDITIONS_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILE}")
 target_sources(muphy2 PRIVATE ${MUPHY2_INITIAL_CONDITIONS_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILE})
 
+# Make number of processes accessible via configure variable
+set(MUPHY2_NPROC_X 1 CACHE STRING "Number of processes in X dimension")
+set(MUPHY2_NPROC_Y 1 CACHE STRING "Number of processes in Y dimension")
+set(MUPHY2_NPROC_Z 1 CACHE STRING "Number of processes in Z dimension")
+message(STATUS "Building for ${MUPHY2_NPROC_X}x${MUPHY2_NPROC_Y}x${MUPHY2_NPROC_Z} processes (XxYxZ)")
+
 # Generate Hex-dumped headers
 set(MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT initial_conditions_files_content.h)
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
     COMMAND cp ${MUPHY2_INITIAL_CONDITIONS_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILE} ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
+    COMMAND sed -i -e "\"s/\\(nproc\\[0\\]\\s*=\\s*\\)[0-9]*;/\\1${MUPHY2_NPROC_X};/g\"" ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
+    COMMAND sed -i -e "\"s/\\(nproc\\[1\\]\\s*=\\s*\\)[0-9]*;/\\1${MUPHY2_NPROC_Y};/g\"" ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
+    COMMAND sed -i -e "\"s/\\(nproc\\[2\\]\\s*=\\s*\\)[0-9]*;/\\1${MUPHY2_NPROC_Z};/g\"" ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
     COMMAND xxd -i ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc | sed -e "s/_.*_initial_conditions_cc/___framework_initial_conditions_cc/" > ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
     COMMAND xxd -i framework/parameter.h | sed -e "s/[ ]*framework_parameter_h/ ___framework_parameter_h/" >> ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
     COMMAND xxd -i physics/plasma/setup/setup.F90 | sed -e "s/physics.*setup_F90/___physics_plasma_setup_setup_F90/" >> ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}

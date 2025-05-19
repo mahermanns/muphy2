@@ -48,6 +48,9 @@ The following options can be set to influence the build:
 |ACC_OPT| Optimization of OpenACC pragmas for either '2D' or '3D'. Default is '3D', can be set to '2D' manually |
 |ENABLE_OPENACC | Check for and enable OpenACC support (default: ON for NVHPC, OFF otherwise) |
 |ENABLE_CUDA | Check for and enable CUDA support (default: ON for NVHPC, OFF otherwise) |
+|MUPHY2_NPROC_X | Number of processes in first dimension (default: 1) |
+|MUPHY2_NPROC_Y | Number of processes in second dimension (default: 1) |
+|MUPHY2_NPROC_Z | Number of processes in third dimension (default: 1) |
 
 Configure with
 ```sh
