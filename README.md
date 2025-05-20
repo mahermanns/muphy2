@@ -51,6 +51,7 @@ The following options can be set to influence the build:
 |MUPHY2_NPROC_X | Number of processes in first dimension (default: 1) |
 |MUPHY2_NPROC_Y | Number of processes in second dimension (default: 1) |
 |MUPHY2_NPROC_Z | Number of processes in third dimension (default: 1) |
+|MUPHY2_INITIAL_CONDITIONS_FILE | Reference to a file defining the initial conditions |
 
 Configure with
 ```sh

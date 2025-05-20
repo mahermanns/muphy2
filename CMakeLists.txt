@@ -79,10 +79,8 @@ else()
 endif()
 
 # Add specific initial conditions file to target dependencies
-set(MUPHY2_INITIAL_CONDITIONS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/physics/plasma/setup/initial_conditions CACHE PATH "Source directory for initial conditions file")
-set(MUPHY2_INITIAL_CONDITIONS_FILE initial_conditions_ot.cc CACHE FILEPATH "Source file for initial conditions")
-message(STATUS "Using initial conditions file: ${MUPHY2_INITIAL_CONDITIONS_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILE}")
-target_sources(muphy2 PRIVATE ${MUPHY2_INITIAL_CONDITIONS_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILE})
+set(MUPHY2_INITIAL_CONDITIONS_FILE "${CMAKE_CURRENT_SOURCE_DIR}/framework/initial_conditions.cc" CACHE FILEPATH "Source file for initial conditions")
+message(STATUS "Using initial conditions file: ${MUPHY2_INITIAL_CONDITIONS_FILE}")
 
 # Make number of processes accessible via configure variable
 set(MUPHY2_NPROC_X 1 CACHE STRING "Number of processes in X dimension")
