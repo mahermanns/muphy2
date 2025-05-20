@@ -90,26 +90,34 @@ set(MUPHY2_NPROC_Y 1 CACHE STRING "Number of processes in Y dimension")
 set(MUPHY2_NPROC_Z 1 CACHE STRING "Number of processes in Z dimension")
 message(STATUS "Building for ${MUPHY2_NPROC_X}x${MUPHY2_NPROC_Y}x${MUPHY2_NPROC_Z} processes (XxYxZ)")
 
+# Generate framework/initial_conditions.cc
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
+    COMMAND cp ${MUPHY2_INITIAL_CONDITIONS_FILE} ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
+    COMMAND sed -i -e "\"s/\\(nproc\\[0\\]\\s*=\\s*\\)[0-9]*;/\\1${MUPHY2_NPROC_X};/g\"" ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
+    COMMAND sed -i -e "\"s/\\(nproc\\[1\\]\\s*=\\s*\\)[0-9]*;/\\1${MUPHY2_NPROC_Y};/g\"" ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
+    COMMAND sed -i -e "\"s/\\(nproc\\[2\\]\\s*=\\s*\\)[0-9]*;/\\1${MUPHY2_NPROC_Z};/g\"" ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
+    DEPENDS ${MUPHY2_INITIAL_CONDITIONS_FILE}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Generating 'framework/initial_conditions.cc'"
+)
+target_sources(muphy2 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc)
+
 # Generate Hex-dumped headers
 set(MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT initial_conditions_files_content.h)
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
-    COMMAND cp ${MUPHY2_INITIAL_CONDITIONS_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILE} ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
-    COMMAND sed -i -e "\"s/\\(nproc\\[0\\]\\s*=\\s*\\)[0-9]*;/\\1${MUPHY2_NPROC_X};/g\"" ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
-    COMMAND sed -i -e "\"s/\\(nproc\\[1\\]\\s*=\\s*\\)[0-9]*;/\\1${MUPHY2_NPROC_Y};/g\"" ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
-    COMMAND sed -i -e "\"s/\\(nproc\\[2\\]\\s*=\\s*\\)[0-9]*;/\\1${MUPHY2_NPROC_Z};/g\"" ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
     COMMAND xxd -i ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc | sed -e "s/_.*_initial_conditions_cc/___framework_initial_conditions_cc/" > ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
     COMMAND xxd -i framework/parameter.h | sed -e "s/[ ]*framework_parameter_h/ ___framework_parameter_h/" >> ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
     COMMAND xxd -i physics/plasma/setup/setup.F90 | sed -e "s/physics.*setup_F90/___physics_plasma_setup_setup_F90/" >> ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}
-    DEPENDS ${MUPHY2_INITIAL_CONDITIONS_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILE} framework/parameter.h physics/plasma/setup/setup.F90
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc framework/parameter.h physics/plasma/setup/setup.F90
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Generating '${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT}'"
     )
 # Add generated file to target source dependencies
 target_sources(muphy2 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/${MUPHY2_INITIAL_CONDITIONS_FILES_CONTENT})
 
-# Add base directory to include path (to satisfy '#include "framework/..."'
-# statements)
+# Add base directory to include path (to satisfy '#include "framework/..."' statements)
 target_include_directories(muphy2 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 # Add build directory to include path (to enable finding generated sources)
 target_include_directories(muphy2 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
@@ -126,6 +134,7 @@ add_subdirectory(physics/plasma/setup)
 target_compile_options(muphy2 PRIVATE
     $<$<CXX_COMPILER_ID:NVHPC>:-fast>
     $<$<CXX_COMPILER_ID:Clang,GNU,Intel,IntelLLVM>:-Ofast -march=native -mtune=native>
+    $<$<COMPILE_LANGUAGE:CXX>:$<$<CXX_COMPILER_ID:Clang,GNU,Intel,IntelLLVM>:-Wno-unknown-pragmas>>
     $<$<CXX_COMPILER_ID:GNU>:-MMD>
     $<$<COMPILE_LANGUAGE:Fortran>:$<$<Fortran_COMPILER_ID:GNU>:-fPIE -ffree-line-length-none>>
 )
