@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.29)
 
 # Check for git executable
 find_package(Git)
@@ -80,7 +80,11 @@ endif()
 
 # Add specific initial conditions file to target dependencies
 set(MUPHY2_INITIAL_CONDITIONS_FILE "${CMAKE_CURRENT_SOURCE_DIR}/framework/initial_conditions.cc" CACHE FILEPATH "Source file for initial conditions")
-message(STATUS "Using initial conditions file: ${MUPHY2_INITIAL_CONDITIONS_FILE}")
+if (IS_READABLE ${MUPHY2_INITIAL_CONDITIONS_FILE})
+    message(STATUS "Using initial conditions file: ${MUPHY2_INITIAL_CONDITIONS_FILE}")
+else()
+    message(STATUS "Specified initial conditions file '${MUPHY2_INITIAL_CONDITIONS_FILE}' does not exist or is not readable.")
+endif()
 
 # Make number of processes accessible via configure variable
 set(MUPHY2_NPROC_X 1 CACHE STRING "Number of processes in X dimension")
