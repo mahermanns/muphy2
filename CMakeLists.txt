@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.29)
 find_package(Git)
 if (GIT_EXECUTABLE)
     # Get a version string from git
-    execute_process(COMMAND ${GIT_EXECUTABLE} describe --all --contains --tags --dirty="*" --abbrev=8
+    execute_process(COMMAND ${GIT_EXECUTABLE} describe --always --tags --dirty=* --abbrev=8
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                     OUTPUT_VARIABLE MUPHY2_GIT_VERSION)
     string(STRIP "${MUPHY2_GIT_VERSION}" MUPHY2_GIT_VERSION)
