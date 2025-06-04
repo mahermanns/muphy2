@@ -86,19 +86,10 @@ else()
     message(STATUS "Specified initial conditions file '${MUPHY2_INITIAL_CONDITIONS_FILE}' does not exist or is not readable.")
 endif()
 
-# Make number of processes accessible via configure variable
-set(MUPHY2_NPROC_X 1 CACHE STRING "Number of processes in X dimension")
-set(MUPHY2_NPROC_Y 1 CACHE STRING "Number of processes in Y dimension")
-set(MUPHY2_NPROC_Z 1 CACHE STRING "Number of processes in Z dimension")
-message(STATUS "Building for ${MUPHY2_NPROC_X}x${MUPHY2_NPROC_Y}x${MUPHY2_NPROC_Z} processes (XxYxZ)")
-
 # Generate framework/initial_conditions.cc
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
     COMMAND cp ${MUPHY2_INITIAL_CONDITIONS_FILE} ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
-    COMMAND sed -i -e "\"s/\\(nproc\\[0\\]\\s*=\\s*\\)[0-9]*;/\\1${MUPHY2_NPROC_X};/g\"" ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
-    COMMAND sed -i -e "\"s/\\(nproc\\[1\\]\\s*=\\s*\\)[0-9]*;/\\1${MUPHY2_NPROC_Y};/g\"" ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
-    COMMAND sed -i -e "\"s/\\(nproc\\[2\\]\\s*=\\s*\\)[0-9]*;/\\1${MUPHY2_NPROC_Z};/g\"" ${CMAKE_CURRENT_BINARY_DIR}/framework/initial_conditions.cc
     DEPENDS ${MUPHY2_INITIAL_CONDITIONS_FILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Generating 'framework/initial_conditions.cc'"
