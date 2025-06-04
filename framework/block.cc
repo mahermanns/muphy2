@@ -8,6 +8,8 @@
 
 #include "block.h"
 
+#include "version.h"
+
 #include "mpi.h"
 #include <iomanip>
 #include <iostream>
@@ -75,7 +77,8 @@ Block::Block()
   block_id_.compute_node = floor(nnodes * ((real)block_id_.my_id)/nprocs);
 
   if (block_id_.my_id == 0) {
-    std::cout << std::endl << "muphy 2.0"<< std::endl
+    std::cout << std::endl << "muphy 2.0" 
+    << " (version: " << MUPHY2_VERSION << " / precision: " << MUPHY2_PRECISION << ")" << std::endl
     << "Multiphysics plasma simulation framework"<< std::endl
     << std::endl
     << "----------------------------------------------------------------------------" << std::endl

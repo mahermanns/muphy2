@@ -3,12 +3,26 @@ cmake_minimum_required(VERSION 3.29)
 # Check for git executable
 find_package(Git)
 if (GIT_EXECUTABLE)
-    # Get a version string from git
-    execute_process(COMMAND ${GIT_EXECUTABLE} describe --always --tags --dirty=* --abbrev=8
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                    OUTPUT_VARIABLE MUPHY2_GIT_VERSION)
-    string(STRIP "${MUPHY2_GIT_VERSION}" MUPHY2_GIT_VERSION)
-    message(STATUS "Detected Git version: ${MUPHY2_GIT_VERSION}")
+    # Check if in compiled from Git repository
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} rev-parse --is-inside-work-tree
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_IS_REPO
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        RESULT_VARIABLE GIT_RESULT
+    )
+
+    if(GIT_RESULT EQUAL 0 AND GIT_IS_REPO STREQUAL "true")
+        # Get a version string from git
+        execute_process(COMMAND ${GIT_EXECUTABLE} describe --always --tags --dirty=* --abbrev=8
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                        OUTPUT_VARIABLE MUPHY2_GIT_VERSION)
+        string(STRIP "${MUPHY2_GIT_VERSION}" MUPHY2_GIT_VERSION)
+        set(MUPHY2_VERSION git-${MUPHY2_GIT_VERSION} CACHE STRING "Version of MUPHY2")
+    else()
+        set(MUPHY2_VERSION rel-1.0.1 CACHE STRING "Version of MUPHY2")
+    endif()
+    message(STATUS "MUPHY2 version: ${MUPHY2_VERSION}")
 endif()
 
 # Create Project and enable CXX and Fortran compilers
@@ -22,8 +36,16 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "Choose the type of build." FORCE)
 endif()
 
+# Create an include file with CMake variables
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/framework/version.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/version.h
+    @ONLY
+)
+
 # Create target for 'muphy2' executable
-add_executable(muphy2)
+add_executable(muphy2
+    ${CMAKE_CURRENT_BINARY_DIR}/version.h)
 
 # Add MPI depenency
 target_link_libraries(muphy2 PRIVATE MPI::MPI_CXX MPI::MPI_Fortran)
