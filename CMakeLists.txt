@@ -36,6 +36,14 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "Choose the type of build." FORCE)
 endif()
 
+# Set precision of floating point operations
+set(MUPHY2_PRECISION double CACHE STRING "Select precision: 'single' or 'double'")
+set_property(CACHE MUPHY2_PRECISION PROPERTY STRINGS single double)
+message(STATUS "Selected precision: ${MUPHY2_PRECISION}")
+if("${MUPHY2_PRECISION}" STREQUAL "single")
+    target_compile_options(muphy2 PRIVATE -DSINGLE_PRECISION)
+endif()
+
 # Create an include file with CMake variables
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/framework/version.h.in
@@ -51,14 +59,6 @@ add_executable(muphy2
 target_link_libraries(muphy2 PRIVATE MPI::MPI_CXX MPI::MPI_Fortran)
 # Check for MPI support
 find_package(MPI REQUIRED)
-
-# Set precision of floating point operations
-set(PRECISION "DOUBLE" CACHE STRING "Select precision: SINGLE or DOUBLE")
-set_property(CACHE PRECISION PROPERTY STRINGS SINGLE DOUBLE)
-message(STATUS "Selected precision: ${PRECISION}")
-if("${PRECISION}" STREQUAL "SINGLE")
-    target_compile_options(muphy2 PRIVATE -DSINGLE_PRECISION)
-endif()
 
 # Enable check for OpenACC if NVHPC is used, otherwise disable automatic check
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "NVHPC")

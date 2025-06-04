@@ -44,10 +44,10 @@ The following options can be set to influence the build:
 
 |CMake Option | Description |
 |----|-----|
-|PRECISION | Influence floating point precision. (default: 'DOUBLE', can be set to 'SINGLE' manually) |
 |ACC_OPT| Optimization of OpenACC pragmas for either '2D' or '3D'. Default: '3D', can be set to '2D' manually) |
 |ENABLE_OPENACC | Check for and enable OpenACC support (default: ON for NVHPC, OFF otherwise) |
 |ENABLE_CUDA | Check for and enable CUDA support (default: ON for NVHPC, OFF otherwise) |
+|MUPHY2_PRECISION | Influence floating point precision. (default: 'DOUBLE', can be set to 'SINGLE' manually) |
 |MUPHY2_INITIAL_CONDITIONS_FILE | Reference to a file defining the initial conditions |
 
 Configure with
@@ -58,7 +58,7 @@ cmake -S /path/to/muphy2/basedir -B /path/to/build/dir
 You can set specific options if `-D<OPTION>=<VALUE>` as usual in CMake. For example, select
 single precision with the following command.
 ```sh
-cmake -S /path/to/muphy2/basedir -B /path/to/build/dir -DPRECISION=SINGLE
+cmake -S /path/to/muphy2/basedir -B /path/to/build/dir -DMUPHY2_PRECISION=SINGLE
 ```
 
 **COMPILATION**
